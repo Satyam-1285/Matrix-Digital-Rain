@@ -1,0 +1,35 @@
+#include <stdio.h>
+#include <stdlib.h>
+#include <time.h>
+#include <unistd.h>
+
+#define WIDTH 80
+#define HEIGHT 25
+
+int main() {
+    int drops[WIDTH];
+    for (int i = 0; i < WIDTH; i++) drops[i] = rand() % HEIGHT;
+
+    // Clear screen and hide cursor
+    printf("\033[2J\033[?25l");
+
+    while (1) {
+        for (int i = 0; i < WIDTH; i++) {
+            // Set cursor position: \033[row;colH
+            // Draw a random character in green
+            printf("\033[%d;%dH\033[32m%c", drops[i], i, (char)(rand() % 94 + 33));
+
+            // Move the drop down
+            drops[i]++;
+            if (drops[i] > HEIGHT || (rand() % 10 > 8)) {
+                // Occasional reset for variety
+                printf("\033[%d;%dH ", drops[i] - 1, i); // Erase trail
+                drops[i] = 1;
+            }
+        }
+        fflush(stdout);
+        usleep(50000); // Speed of the rain
+    }
+
+    return 0;
+}
